@@ -1,0 +1,21 @@
+default
+closeButton = False
+backgroundColor = (0,0,0)
+move = False
+transparent = False
+changeSized = False
+fin
+Base
+closeButton = False
+backgroundColor = (255,255,255)
+move = False
+transparent = False
+changeSized = False
+fin
+Float
+closeButton = False
+backgroundColor = (255,255,255)
+move = True
+transparent = False
+changeSized = False
+fin

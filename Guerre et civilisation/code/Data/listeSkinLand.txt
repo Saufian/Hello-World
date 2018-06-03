@@ -1,11 +1,11 @@
-vide Data/terrain_Vide.png ù
-plaine Data/terrain_Herbe.png _
-montagne Data/terrain_Montagne.png ^
-eau Data/terrain_Eau.png ~
-foret Data/terrain_Foret.png #
-lave Data/terrain_Lave.png $
-picInaccessible Data/terrain_MontagneInaccessible.png !
-spawn Data/terrain_Herbe_Spawn.png O
-objectif Data/terrain_Herbe_Objectif.png *
+vide Data/terrain_Vide.png
+plaine Data/terrain_Herbe.png
+montagne Data/terrain_Montagne.png
+eau Data/terrain_Eau.png
+foret Data/terrain_Foret.png
+lave Data/terrain_Lave.png
+picInaccessible Data/terrain_MontagneInaccessible.png
+spawn Data/terrain_Herbe_Spawn.png
+objectif Data/terrain_Herbe_Objectif.png
 denivele Data/denivele.png
 fin
