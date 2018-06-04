@@ -12,10 +12,10 @@ move = False
 transparent = False
 changeSized = False
 fin
-Float
+Test
 closeButton = False
 backgroundColor = (255,255,255)
 move = True
 transparent = False
-changeSized = False
+changeSized = True
 fin

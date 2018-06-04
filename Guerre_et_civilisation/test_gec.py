@@ -4,7 +4,7 @@ from map_generator import*
 
 Screen.main = pygame.display.set_mode((1300, 700))
 Screen.source = "paramScreen.txt"
-font = Screen(1000, 400, 300, 300, 0, "Float")  # initialisation de GuerreEtCivilisation (resolution de l'affichage)
+test = Screen(1000, 400, 300, 300, 0, "Test")  # initialisation de GuerreEtCivilisation (resolution de l'affichage)
 main = Screen(0, 0, 1300, 700, -1)
 
 load_pygame_skin("Data/listeSkinLand.txt")  # recuperation des skins dans le fichier dans data
@@ -25,17 +25,17 @@ listePerso = [toto, titi, tata]  # liste contenant les persos
 print("listePerso contient les personnages")
 
 
-a = Maps()  # une nouvelle map pour faire les tests
-a.load_map("Data/ile.txt")  # creation d'une map "ile" (taille:11/11 ; type "ile")
+petit_ile = Maps()  # une nouvelle map pour faire les tests
+petit_ile.load_map("Data/ile.txt")  # creation d'une map "ile" (taille:11/11 ; type "ile")
 # tata.print_perso(a, font)  # affichage du perso sur la map1 aux coordonnées de celui ci
 
 print  # un retour a la ligne pour la lisibilité
 # toto.test_move(a)  # test d'affichage des mouvements
 
-print_perso(a, main, listePerso)  # affichage des perso de la liste 'listePerso'
+print_perso(petit_ile, main, listePerso)  # affichage des perso de la liste 'listePerso'
 
-z = Maps()  # creation de la map de grande taille
-z.load_map("Data/Map1Ile.txt")
+grand_ile = Maps()  # creation de la map de grande taille
+grand_ile.load_map("Data/Map1Ile.txt")
 
 
-game_window([[a, [tata], main], [z, [toto, titi], font]])
+game_window([[petit_ile, [tata], main], [grand_ile, [toto, titi], test]])

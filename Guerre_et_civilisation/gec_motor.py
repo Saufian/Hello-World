@@ -141,13 +141,13 @@ def game(maps, liste_perso, screen, boucle=True):  # jeu, sur la map, avec la li
 
 
 def what_screen(x, y, liste_screen):
-    selection_viable = []
+    selection_viable = []  # on va d'abord selectionner tous ceux qui sont à la bonne position
     for i in liste_screen:
         if i.pos_x <= x <= i.pos_x+i.width and i.pos_y <= y <= i.pos_y+i.height:
             selection_viable.append(i)
-    if len(selection_viable) == 0:
+    if len(selection_viable) == 0:  # erreur s'il n'y a rien dans la liste
         print("erreur screen")
-    maxi_prior = selection_viable[0].prior
+    maxi_prior = selection_viable[0].prior  # on regarde maintenant l'écran avec une priorité maximale
     sol = selection_viable[0]
     for i in selection_viable:
         if i.prior > maxi_prior:
@@ -179,6 +179,23 @@ def deplace_screen(liste_screen, x, y):
         screen_on.pos_x, screen_on.pos_y = x - x_cursor, y - y_cursor  # on place l'écran à la position du curseur
 
 
+def change_size_screen(liste_screen, x_init, y_init):
+    screen_on = what_screen(x_init, y_init, liste_screen)  # on trouve l'ecran sur lequel on se trouve
+    # on regarde de quel coté il faut agrandir la fenetre
+    posmillieu_x = screen_on.get_size()[0]/2 + screen_on.pos_x
+    posmillieu_y = screen_on.get_size()[1]/2 + screen_on.pos_y
+    if screen_on.get_param("changeSized"):  # si l'on peut faire bouger l'écran
+        x, y = 0, 0
+        while pygame.mouse.get_pressed()[2] == 1:  # on attend que le bouton soit relaché
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    sys.exit()
+            x, y = pygame.mouse.get_pos()  # on récupère la position du curseur
+        if x_init < posmillieu_x:
+            screen_on.width -= x - x_init
+            screen_on.pos_x += x - x_init  # on deplace l'écran à pour le mettre a la bonne position
+
+
 def game_window(arg):  # fonction de jeu actuel, map choisi, avec les perso, et gestion d'ecran
     # arg de la forme [[maps1, liste_perso1, screen1],[maps2, liste_perso2, screen2],...]
     fps = pygame.time.Clock()  # mise en place d'une horloge
@@ -195,9 +212,16 @@ def game_window(arg):  # fonction de jeu actuel, map choisi, avec les perso, et 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit()
-            if pygame.mouse.get_pressed()[0] == 1:
+            if pygame.mouse.get_pressed()[0] == 1:  # si on realise un clic droit (et que l'on fait glisser)
                 x1, y1 = pygame.mouse.get_pos()
-                deplace_screen(liste_screen, x1, y1)
+                deplace_screen(liste_screen, x1, y1)  # l'écran se deplace
+                screen_on = what_screen(x1, y1, liste_screen)  # on trouve l'écran utilisé
+                num_arg = liste_screen.index(screen_on)
+                maps, liste_perso, screen_on = arg[num_arg]  # les personnages, écran et terrain associé à l'écran
+                game(maps, liste_perso, screen_on, False)  # on lance la fonction de jeu standart sans boucle
+            elif pygame.mouse.get_pressed()[2] == 1:
+                x1, y1 = pygame.mouse.get_pos()
+                change_size_screen(liste_screen, x1, y1)  # l'écran se deplace
         else:  # jeu normal
             x1, y1 = pygame.mouse.get_pos()
             screen_on = what_screen(x1, y1, liste_screen)  # on trouve l'écran utilisé
