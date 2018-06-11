@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-import copy
-# pour pouvoir travailler sur des maps avec les perso sans modifier les maps originales.
+import copy  # pour pouvoir travailler sur des maps avec les perso sans modifier les maps originales.
 from map import *
 import gec_motor as motor
 

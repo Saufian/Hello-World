@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from perso import *
+import map_generator
 # from __future__ import division
 import sys
 import pygame
@@ -190,7 +191,7 @@ def deplace_screen(screen_on, x, y):
         screen_on.pos_x, screen_on.pos_y = x - x_cursor, y - y_cursor  # on place l'écran à la position du curseur
 
 
-def change_size_screen(screen_on, maps, x_init, y_init):
+def change_size_screen(screen_on, maps, x_init, y_init):  # TODO mettre en place un systeme de changement de curseurs
     # on regarde de quel coté il faut agrandir la fenêtre
     posmillieu_x = screen_on.get_size()[0]/2 + screen_on.pos_x
     posmillieu_y = screen_on.get_size()[1]/2 + screen_on.pos_y
@@ -258,6 +259,16 @@ def game_window(arg):  # fonction de jeu actuel, map choisi, avec les perso, et 
                 maps, liste_perso, screen_on = arg[num_arg]  # les personnages, écran et terrain associé à l'écran
                 change_size_screen(screen_on, maps, x1, y1)  # l'écran change de taille
                 game(maps, liste_perso, screen_on, False)  # on lance la fonction de jeu standard sans boucle
+            elif pygame.mouse.get_pressed()[1] == 1:  # clic central, commande l'ouverture de l'éditeur de map
+                while pygame.mouse.get_pressed()[1] == 1:
+                    for event in pygame.event.get():
+                        if event.type == pygame.QUIT:
+                            sys.exit()
+                x1, y1 = pygame.mouse.get_pos()
+                screen_on = what_screen(x1, y1, liste_screen)  # on trouve l'écran utilisé
+                num_arg = liste_screen.index(screen_on)
+                maps = arg[num_arg][0]  # les personnages, écran et terrain associé à l'écran
+                map_generator.change_type(maps.doc, screen_on)
         else:  # jeu normal
             x1, y1 = pygame.mouse.get_pos()
             screen_on = what_screen(x1, y1, liste_screen)  # on trouve l'écran utilisé

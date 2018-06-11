@@ -50,7 +50,7 @@ class Land:  # objet Land, qui compose les cartes de jeu.
                 skin_final.blit(i.pygameImage, (0, 0))  # récupérer la surface (de pygame) correspondante
                 # return self.graphism# retourner les bons graphismes
                 for j in LoadSkin.listeLoad:  # vérification que les graphismes pour représenter la hauteur sont définis
-                    if "denivele" == j.ref:
+                    if "denivele" == j.ref:  # TODO ameliorer ce test
                         for loop in range(int(self.hauteur)):
                             # on fait apparaitre {hauteur} fois les graphismes pour montrer le dénivelé
                             skin_final.blit(j.pygameImage, (0, 32 - ((self.hauteur + 1) * 8)))
@@ -62,9 +62,13 @@ class Land:  # objet Land, qui compose les cartes de jeu.
 class Maps:
     lastMapPrint = [[], []]
 
-    def __init__(self, xmax=0, ymax=0, typ="vide"):
+    def __init__(self, xmax=1, ymax=1, typ="vide", doc=""):
         # création d'une map de taille "xmax","ymax",stocké dans la liste "name", rempli de Land de type "typ"
         self.contenu = []
+        if doc == "":
+            self.doc = ""
+        else:
+            self.load_map(doc)
         for x in range(xmax):
             self.contenu.append([])
             for y in range(ymax):
@@ -123,6 +127,7 @@ class Maps:
             return screen.surface, size_screen[0] // (largeur - x), size_screen[1] // (hauteur - y)
 
     def load_map(self, doc, complexite=1):  # complexite correspond au niveau de détail de la map
+        self.doc = doc
         data = charge_mot(doc, 1)  # data contient toutes les informations sur la map
         del self.contenu[:]  # on vide la map précédente pour être sur de ne pas réécrire dessus
         for x in range(len(data[0])):

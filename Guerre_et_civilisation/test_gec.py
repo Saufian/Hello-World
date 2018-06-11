@@ -1,6 +1,6 @@
   # -*- coding: utf-8 -*-
 
-from map_generator import*
+from gec_motor import*
 
 Screen.main = pygame.display.set_mode()
 # pygame.display.toggle_fullscreen()
