@@ -13,7 +13,7 @@ class Screen:  # objet permettant de superposer des fenetres de taille variable 
     main = None  # à définir lors de l'initialisation (la premiere fenetre créé par défaut)
     list_screen = []  # liste de tous les objets
 
-    def __init__(self, pos_x, pos_y, screen_width, screen_height, prior=0, type_screen="default", change_param=None):
+    def __init__(self, pos_x, pos_y, (screen_width, screen_height), prior=0, type_screen="default", change_param=None):
         if change_param is None:
             change_param = []
         # creation d'une nouvelle fenetre
@@ -23,8 +23,8 @@ class Screen:  # objet permettant de superposer des fenetres de taille variable 
         self.height = screen_height
         size = screen_width, screen_height
         self.surface = pygame.Surface(size)
-        self.param = [["closeButton", "backgroundColor", "move", "transparent", "changeSized"],
-                      [False, (0, 0, 0), False, False, False]]  # param type default
+        self.param = [["closeButton", "backgroundColor", "autoFill", "move", "transparent", "changeSized"],
+                      [False, (0, 0, 0), False, False, False, False]]  # param type default
         self.load_param(type_screen)
         for i in change_param:
             temp = i.split(" ")
@@ -47,6 +47,7 @@ class Screen:  # objet permettant de superposer des fenetres de taille variable 
             self.prior = 0
             for i in range(1, len(Screen.list_screen)):
                 Screen.list_screen[i].prior = i
+        self.surface.fill(self.get_param("backgroundColor"))  # on remplit avec la couleur de fond
 
     def load_param(self, type_screen="default"):  # type_screen correspond au réglage déjà mis dans Screen.source
         doc = open(Screen.source, 'r')
@@ -86,6 +87,13 @@ class Screen:  # objet permettant de superposer des fenetres de taille variable 
             return self.param[1][self.param[0].index(name)]
         else:
             return None
+
+    def resize(self, maps):
+        width_map = len(maps.contenu)
+        height_map = len(maps.contenu[0])
+        if self.get_param("autoFill"):
+            self.width = (self.width // width_map) * width_map
+            self.height = (self.height // height_map) * height_map
 
 
 def condense_screen(liste_screen=Screen.list_screen):  # affiche les differents sous ecran dans la fenetre principale
@@ -166,8 +174,7 @@ def test_keyboard(test):  # test correspond au caractere que l'on doit regarder 
     return charact == test  # comparaison avec la touche demandé
 
 
-def deplace_screen(liste_screen, x, y):
-    screen_on = what_screen(x, y, liste_screen)  # on trouve l'ecran sur lequel on se trouve
+def deplace_screen(screen_on, x, y):
     x_cursor = x - screen_on.pos_x
     y_cursor = y - screen_on.pos_y
     if screen_on.get_param("move"):  # si l'on peut faire bouger l'écran
@@ -179,13 +186,12 @@ def deplace_screen(liste_screen, x, y):
         screen_on.pos_x, screen_on.pos_y = x - x_cursor, y - y_cursor  # on place l'écran à la position du curseur
 
 
-def change_size_screen(liste_screen, x_init, y_init):
-    screen_on = what_screen(x_init, y_init, liste_screen)  # on trouve l'ecran sur lequel on se trouve
+def change_size_screen(screen_on, maps, x_init, y_init):
     # on regarde de quel coté il faut agrandir la fenetre
     posmillieu_x = screen_on.get_size()[0]/2 + screen_on.pos_x
     posmillieu_y = screen_on.get_size()[1]/2 + screen_on.pos_y
     if screen_on.get_param("changeSized"):  # si l'on peut faire bouger l'écran
-        x, y = 0, 0
+        x, y = 0, 0  # initialisation des variables
         while pygame.mouse.get_pressed()[2] == 1:  # on attend que le bouton soit relaché
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -201,18 +207,22 @@ def change_size_screen(liste_screen, x_init, y_init):
             screen_on.pos_y += y - y_init  # on deplace l'écran à pour le mettre a la bonne position
         else:  # si on clique sur le haut de l'écran
             screen_on.height += y - y_init  # changement de taille de la fenetre (pas besoin de bouger la fenetre)
+        screen_on.resize(maps)
         screen_on.surface = pygame.Surface(screen_on.get_size())  # on met à jour la taille de la fenetre
+        screen_on.surface.fill(screen_on.get_param("backgroundColor"))
 
 
 def game_window(arg):  # fonction de jeu actuel, map choisi, avec les perso, et gestion d'ecran
     # arg de la forme [[maps1, liste_perso1, screen1],[maps2, liste_perso2, screen2],...]
     fps = pygame.time.Clock()  # mise en place d'une horloge
     liste_screen = []  # liste des fenetres à l'écran
+    loop = True
     for i in arg:
         print_perso(i[0], i[2], i[1])  # on affiche tout les terrains dans un premier temps
         liste_screen.append(i[2])  # on remplie une liste avec les differentes fenetres
-    while True:
+    while loop:
         fps.tick(50)  # limitation des fps de la page
+        loop = not(test_keyboard("escape"))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
@@ -222,17 +232,17 @@ def game_window(arg):  # fonction de jeu actuel, map choisi, avec les perso, et 
                     sys.exit()
             if pygame.mouse.get_pressed()[0] == 1:  # si on realise un clic droit (et que l'on fait glisser)
                 x1, y1 = pygame.mouse.get_pos()
-                deplace_screen(liste_screen, x1, y1)  # l'écran se deplace
                 screen_on = what_screen(x1, y1, liste_screen)  # on trouve l'écran utilisé
                 num_arg = liste_screen.index(screen_on)
                 maps, liste_perso, screen_on = arg[num_arg]  # les personnages, écran et terrain associé à l'écran
+                deplace_screen(screen_on, x1, y1)  # l'écran se deplace
                 game(maps, liste_perso, screen_on, False)  # on lance la fonction de jeu standart sans boucle
             elif pygame.mouse.get_pressed()[2] == 1:
                 x1, y1 = pygame.mouse.get_pos()
-                change_size_screen(liste_screen, x1, y1)  # l'écran change de taille
                 screen_on = what_screen(x1, y1, liste_screen)  # on trouve l'écran utilisé
                 num_arg = liste_screen.index(screen_on)
                 maps, liste_perso, screen_on = arg[num_arg]  # les personnages, écran et terrain associé à l'écran
+                change_size_screen(screen_on, maps, x1, y1)  # l'écran change de taille
                 game(maps, liste_perso, screen_on, False)  # on lance la fonction de jeu standart sans boucle
         else:  # jeu normal
             x1, y1 = pygame.mouse.get_pos()
@@ -240,3 +250,4 @@ def game_window(arg):  # fonction de jeu actuel, map choisi, avec les perso, et 
             num_arg = liste_screen.index(screen_on)
             maps, liste_perso, screen_on = arg[num_arg]  # les personnages, écran et terrain associé à l'écran
             game(maps, liste_perso, screen_on, False)  # on lance la fonction de jeu standart sans boucle
+    sys.exit()

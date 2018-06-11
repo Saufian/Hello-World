@@ -2,10 +2,13 @@
 
 from map_generator import*
 
-Screen.main = pygame.display.set_mode((1300, 700))
+Screen.main = pygame.display.set_mode()
+# pygame.display.toggle_fullscreen()
 Screen.source = "paramScreen.txt"
-test = Screen(1000, 400, 300, 300, 0, "Test")  # initialisation de GuerreEtCivilisation (resolution de l'affichage)
-main = Screen(0, 0, 1300, 700, -1)
+test = Screen(1000, 400, (300, 300), 0, "Test")  # initialisation de GuerreEtCivilisation (resolution de l'affichage)
+main = Screen(0, 0, (1300, 700), -1, "Base")
+print(Screen.main.get_rect())
+font = Screen(0, 0, Screen.main.get_rect()[2:], -1)
 
 load_pygame_skin("Data/listeSkinLand.txt")  # recuperation des skins dans le fichier dans data
 
@@ -37,5 +40,6 @@ print_perso(petit_ile, main, listePerso)  # affichage des perso de la liste 'lis
 grand_ile = Maps()  # creation de la map de grande taille
 grand_ile.load_map("Data/Map1Ile.txt")
 
+vide = Maps(1, 1)
 
-game_window([[petit_ile, [tata], main], [grand_ile, [toto, titi], test]])
+game_window([[petit_ile, [tata], main], [grand_ile, [toto, titi], test], [vide, [], font]])

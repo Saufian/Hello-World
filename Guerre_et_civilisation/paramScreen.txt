@@ -1,6 +1,7 @@
 default
 closeButton = False
 backgroundColor = (0,0,0)
+autoFill = False
 move = False
 transparent = False
 changeSized = False
@@ -8,6 +9,7 @@ fin
 Base
 closeButton = False
 backgroundColor = (255,255,255)
+autoFill = False
 move = False
 transparent = False
 changeSized = False
@@ -15,6 +17,7 @@ fin
 Test
 closeButton = False
 backgroundColor = (255,255,255)
+autoFill = True
 move = True
 transparent = False
 changeSized = True
