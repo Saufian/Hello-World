@@ -191,9 +191,17 @@ def change_size_screen(liste_screen, x_init, y_init):
                 if event.type == pygame.QUIT:
                     sys.exit()
             x, y = pygame.mouse.get_pos()  # on récupère la position du curseur
-        if x_init < posmillieu_x:
-            screen_on.width -= x - x_init
+        if x_init < posmillieu_x:  # si on clique sur la gauche de l'écran
+            screen_on.width -= x - x_init  # changement de taille de la fenetre
             screen_on.pos_x += x - x_init  # on deplace l'écran à pour le mettre a la bonne position
+        else:  # si on clique sur la droite de l'écran
+            screen_on.width += x - x_init  # changement de taille de la fenetre (pas besoin de bouger la fenetre)
+        if y_init < posmillieu_y:  # si on clique sur le bas de l'écran
+            screen_on.height -= y - y_init  # changement de taille de la fenetre
+            screen_on.pos_y += y - y_init  # on deplace l'écran à pour le mettre a la bonne position
+        else:  # si on clique sur le haut de l'écran
+            screen_on.height += y - y_init  # changement de taille de la fenetre (pas besoin de bouger la fenetre)
+        screen_on.surface = pygame.Surface(screen_on.get_size())  # on met à jour la taille de la fenetre
 
 
 def game_window(arg):  # fonction de jeu actuel, map choisi, avec les perso, et gestion d'ecran
@@ -221,7 +229,11 @@ def game_window(arg):  # fonction de jeu actuel, map choisi, avec les perso, et 
                 game(maps, liste_perso, screen_on, False)  # on lance la fonction de jeu standart sans boucle
             elif pygame.mouse.get_pressed()[2] == 1:
                 x1, y1 = pygame.mouse.get_pos()
-                change_size_screen(liste_screen, x1, y1)  # l'écran se deplace
+                change_size_screen(liste_screen, x1, y1)  # l'écran change de taille
+                screen_on = what_screen(x1, y1, liste_screen)  # on trouve l'écran utilisé
+                num_arg = liste_screen.index(screen_on)
+                maps, liste_perso, screen_on = arg[num_arg]  # les personnages, écran et terrain associé à l'écran
+                game(maps, liste_perso, screen_on, False)  # on lance la fonction de jeu standart sans boucle
         else:  # jeu normal
             x1, y1 = pygame.mouse.get_pos()
             screen_on = what_screen(x1, y1, liste_screen)  # on trouve l'écran utilisé
