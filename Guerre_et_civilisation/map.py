@@ -6,21 +6,21 @@ import gec_motor as motor
 
 class Land:  # objet Land, qui compose les cartes de jeu.
     def __init__(self, ref):
-        # creation de map, avec un type pour l'identification et pour l'affichage si pas de graphisme spéciaux définis
+        # création de map, avec un type pour l'identification et pour l'affichage si pas de graphisme spéciaux définis
         self.state = ref
         self.graphism = None  # pas de graphisme par défaut
         self.hauteur = 0  # correspond a la hauteur de l'élément. Un personnage basique ne peut pas monter 1 de hauteur
-        self.spe = []  # ajoute des caracteristiques speciales
+        self.spe = []  # ajoute des caractéristiques spéciales
         self.name = None
 
     def set_state(self, ref):  # changement du type de terrain
         self.state = ref
 
-    def set_spe(self, typ):  # met en place les caracteristiques speciales
-        if not (typ in self.spe):  # verification de la non presence (pas de doublon)
+    def set_spe(self, typ):  # met en place les caractéristiques spéciales
+        if not (typ in self.spe):  # vérification de la non présence (pas de doublon)
             self.spe.append(typ)
 
-    def get_spe(self, typ):  # renvoi "True" si le terrain a la caracteristique speciale typ
+    def get_spe(self, typ):  # renvoi "True" si le terrain a la caractéristique spéciale typ
         return typ in self.spe
 
     def set_name(self, ref):  # possibilité de donner un nom au terrain
@@ -37,22 +37,22 @@ class Land:  # objet Land, qui compose les cartes de jeu.
     def get_graphism(self):
         # renvoi les graphismes pour l'affichage de l'objet : la valeur associé au type de terrain ( par defaut )
         # ou une apparence bien spécifique sous la forme de Str
-        if self.graphism is not None:  # si les graphismes ont deja été initialisé
+        if self.graphism is not None:  # si les graphismes ont déjà été initialisé
             return self.graphism
         else:
-            self.graphism = self.upgrade_graphism()  # sinon definire les parametres
+            self.graphism = self.upgrade_graphism()  # sinon définir les paramètres
             return self.graphism
 
     def upgrade_graphism(self):
         skin_final = pygame.Surface((32, 32))  # taille d'une image du terrain (correspond a la resolution d'une case)
-        for i in LoadSkin.listeLoad:  # recuperation des differents graphismes
-            if self.state == i.ref:  # si le nom de l'etat du terrain correspond avec le nom du skin
-                skin_final.blit(i.pygameImage, (0, 0))  # recuperer la surface (de pygame) correspondante
+        for i in LoadSkin.listeLoad:  # récupération des différents graphismes
+            if self.state == i.ref:  # si le nom de l’état du terrain correspond avec le nom du skin
+                skin_final.blit(i.pygameImage, (0, 0))  # récupérer la surface (de pygame) correspondante
                 # return self.graphism# retourner les bons graphismes
-                for j in LoadSkin.listeLoad:  # verification que les graphismes pour representer la hauteur sont definis
+                for j in LoadSkin.listeLoad:  # vérification que les graphismes pour représenter la hauteur sont définis
                     if "denivele" == j.ref:
                         for loop in range(int(self.hauteur)):
-                            # on fait apparaitre {hauteur} fois les graphismes pour montrer le denivelé
+                            # on fait apparaitre {hauteur} fois les graphismes pour montrer le dénivelé
                             skin_final.blit(j.pygameImage, (0, 32 - ((self.hauteur + 1) * 8)))
                             # positionnement du rajout
                 return skin_final
@@ -63,7 +63,7 @@ class Maps:
     lastMapPrint = [[], []]
 
     def __init__(self, xmax=0, ymax=0, typ="vide"):
-        # creation d'une map de taille "xmax","ymax",stocké dans la liste "name", rempli de Land de type "typ"
+        # création d'une map de taille "xmax","ymax",stocké dans la liste "name", rempli de Land de type "typ"
         self.contenu = []
         for x in range(xmax):
             self.contenu.append([])
@@ -71,7 +71,7 @@ class Maps:
                 self.contenu[x].append(Land(typ))
 
     def create_map(self, xmax, ymax, typ="vide"):
-        # creation d'une map de taille "xmax","ymax", stocké dans la liste "name", rempli de Land de type "typ"
+        # création d'une map de taille "xmax","ymax", stocké dans la liste "name", rempli de Land de type "typ"
         del self.contenu[:]
         for x in range(xmax):
             self.contenu.append([])
@@ -98,8 +98,8 @@ class Maps:
             else:
                 y -= (y - hauteur) + 1
 
-        # TODO : mette en place un systeme de sauvegarde
-        # qui utilise une memoire des 10 derniers affichage(en cas de réutilisation)
+        # TODO : mette en place un système de sauvegarde
+        # qui utilise une mémoire des 10 derniers affichage(en cas de réutilisation)
         #
         # if [x,y,largeur,hauteur] in Maps.lastMapPrint[0]:
         # ecran=Maps.lastMapPrint[1][Maps.lastMapPrint[0].index([x,y,largeur,hauteur])]# (1180 , 630)
@@ -122,15 +122,15 @@ class Maps:
         else:
             return screen.surface, size_screen[0] // (largeur - x), size_screen[1] // (hauteur - y)
 
-    def load_map(self, doc, complexite=1):  # complexite correspond au niveau de detail de la map
+    def load_map(self, doc, complexite=1):  # complexite correspond au niveau de détail de la map
         data = charge_mot(doc, 1)  # data contient toutes les informations sur la map
-        del self.contenu[:]  # on vide la map precedente pour être sur de ne pas réécrire dessus
+        del self.contenu[:]  # on vide la map précédente pour être sur de ne pas réécrire dessus
         for x in range(len(data[0])):
             self.contenu.append([])
             for y in range(len(data)):
                 self.contenu[x].append(Land(data[y][x]))  # on relie chaque info de data avec les objets adapté
         if complexite > 1:  # obligatoire de faire du cas par cas
-            if complexite >= 2:  # detail sur l'altitude
+            if complexite >= 2:  # détail sur l'altitude
                 data = charge_mot(doc, 2)
                 for x in range(len(data[0])):
                     for y in range(len(data)):
@@ -144,8 +144,8 @@ class Maps:
 
 
 def last_map_use(data, screen):
-    # fonction non finalisé, doit pouvoir mettre en memoire les informaions des dernieres map affichées
-    # pour accelerer le processus
+    # fonction non finalisé, doit pouvoir mettre en mémoire les informations des dernières map affichées
+    # pour accélérer le processus
     Maps.lastMapPrint[0].append(data)
     Maps.lastMapPrint[1].append(screen.surface)
     while len(Maps.lastMapPrint[0]) > 10:
@@ -163,10 +163,10 @@ def charge_mot(doc, complexite=1):
     retour = []
     for i in range(complexite):
         retour = []  # on ne capte ainsi que le contenu du [complexite] bloc finissant par "fin"
-        line = save_file.readline()  # attention, le retour a la ligne est aussi recuperé
+        line = save_file.readline()  # attention, le retour a la ligne est aussi récupéré
         line = line[:len(line) - 1]  # on supprime le retour a la ligne.
         while line != "fin":  # on prend toutes les lignes jusqu'à trouver le mot "fin"
-            retour.append(line.split(" ")[:])  # on separe chaque mot de la ligne
+            retour.append(line.split(" ")[:])  # on sépare chaque mot de la ligne
             line = save_file.readline()  # on prend la ligne suivante
             line = line[:len(line) - 1]  # on supprime le retour a la ligne de la nouvelle ligne
     save_file.close()  # on oublie pas de fermer le doc
@@ -176,11 +176,11 @@ def charge_mot(doc, complexite=1):
 def load_pygame_skin(doc):
     # fonction principale dans le chargement des images
     # --> va charger toutes les images dont les adresses sont contenus dans le DOCument.
-    # le document doit etre de la forme : [nom du skin] [adresse du skin]
+    # le document doit être de la forme : [nom du skin] [adresse du skin]
     data = charge_mot(doc)
-    for i in data:  # pour chaque skin, creer un objet de LoadSkin
+    for i in data:  # pour chaque skin, créer un objet de LoadSkin
         load = LoadSkin(i[0])  # associe le nom
-        if len(i) == 2:  # pas de troisieme entrée
+        if len(i) == 2:  # pas de troisième entrée
             load.set_skin(i[1])
 
 
@@ -197,4 +197,4 @@ class LoadSkin:
 
     def set_skin(self, pygame_skin_location):  # met en place les graphismes de cet objet
         self.pygameSkinLocation = pygame_skin_location  # adresse
-        self.pygameImage = pygame.image.load(pygame_skin_location).convert()  # suface associée
+        self.pygameImage = pygame.image.load(pygame_skin_location)  # surface associée
